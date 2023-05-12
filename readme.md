@@ -39,3 +39,13 @@ First, import the main `r4-app` component and use it in your HTML:
 
 - `npm i`
 - `npm run dev`
+
+# Issues
+
+## gitlab url too long
+
+With gitlab pages hosting, we get a http error 401, Request URL is too long (so we host on cloudflare pages).
+
+## cloudflare node.js too low
+
+create `.nvmrc` file with content `18.15.0`
