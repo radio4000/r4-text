@@ -18,15 +18,25 @@ class R4Player extends LitElement {
     this.player.addEventListener("trackChanged", (event) => {
       console.info("trackChanged event", event.detail[0]);
     });
+    this.player.addEventListener("playerReady", (event) => {
+      if (this.playlist) {
+        this.updatePlayer();
+      }
+    });
   }
 
-  loadPlaylist(playlist) {
-    this.playlist = playlist;
-    this.updatePlayer();
+  updated(changedProperties) {
+    if (changedProperties.has("playlist")) {
+      this.updatePlayer();
+    }
   }
 
   updatePlayer() {
-    if (this.playlist && this.player) {
+    if (
+      this.playlist &&
+      this.player &&
+      typeof this.player.getVueInstance === "function"
+    ) {
       const vue = this.player.getVueInstance();
       vue.updatePlaylist(this.playlist);
     }
