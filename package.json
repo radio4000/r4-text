@@ -1,0 +1,19 @@
+{
+  "name": "r4-list",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run dev",
+    "dev": "vite --port 4001",
+    "build": "vite build --config vite.config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lit": "^2.7.4",
+    "vite": "^4.3.5"
+  }
+}
