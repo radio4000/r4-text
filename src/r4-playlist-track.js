@@ -40,4 +40,5 @@ class R4PlaylistTrack extends LitElement {
     this.dispatchEvent(new CustomEvent("track-update", { detail: this.track }));
   }
 }
+
 customElements.define("r4-playlist-track", R4PlaylistTrack);

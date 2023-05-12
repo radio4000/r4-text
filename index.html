@@ -2,13 +2,31 @@
 	<head>
 		<meta charset="UTF-8" />
 		<title>r4-manager</title>
+		<style>
+		:root {
+			--size: 1.5rem;
+		}
+		details {
+			padding: calc(var(--size) / 2);
+		}
+		summary {
+			font-size: var(--size);
+		}
+		textarea {
+			min-height: 5rem;
+		}
+		textarea,
+		input {
+			width: 100%;
+			padding: calc(var(--size) / 3);
+		}
+		</style>
 	</head>
 	<body>
 		<h1>r4-manager</h1>
 
 		<r4-manager></r4-manager>
 
-		<script src="https://cdn.jsdelivr.net/npm/radio4000-player"></script>
 		<script type="module" src="src/index.js"></script>
 	</body>
 </html>

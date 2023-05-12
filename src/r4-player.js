@@ -1,4 +1,4 @@
-// r4-player.js
+import "radio4000-player";
 import { LitElement, html } from "lit";
 
 class R4Player extends LitElement {

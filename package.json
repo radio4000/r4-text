@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "lit": "^2.7.4",
+    "radio4000-player": "^0.6.24",
     "vite": "^4.3.5"
   }
 }

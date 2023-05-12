@@ -1,19 +1,44 @@
-// r4-manager.js
 import { LitElement, html } from "lit";
 
 class R4App extends LitElement {
+  static properties = {
+    playlist: { type: Object },
+  };
+
   constructor() {
     super();
-    this.permissionRequested = false;
+    this.playlist = this.retrievePlaylistFromURL() || this.defaultPlaylist();
   }
 
-  requestNotificationPermission() {
-    if (!this.permissionRequested) {
-      Notification.requestPermission().then((result) => {
-        console.log(`Notification permission: ${result}`);
-      });
-      this.permissionRequested = true;
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener("popstate", this.handlePopstate);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener("popstate", this.handlePopstate);
+  }
+
+  handlePopstate = () => {
+    this.playlist = this.retrievePlaylistFromURL() || this.defaultPlaylist();
+  };
+
+  retrievePlaylistFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("playlist")) {
+      const playlist = urlParams.get("playlist");
+      return JSON.parse(decodeURIComponent(playlist));
     }
+    return null;
+  }
+
+  defaultPlaylist() {
+    return {
+      title: "",
+      image: "",
+      tracks: [],
+    };
   }
 
   notify(title, body) {
@@ -22,13 +47,32 @@ class R4App extends LitElement {
     }
   }
 
-  loadPlaylist(event) {
+  loadMediaUrls(event) {
+    const { detail } = event;
+    console.log("load media url", detail);
     this.notify(
       "Playlist updated",
       "The playlist has been updated with new tracks."
     );
-    // Pass the event to the r4-playlist component
-    this.querySelector("r4-playlist").updatePlaylist(event);
+    // Update playlist
+    const updatedTracks = detail.filter((newTrack) => {
+      return !this.playlist.tracks.some((track) => track.id === newTrack.id);
+    });
+    const updatedPlaylist = {
+      ...this.playlist,
+      tracks: [...this.playlist.tracks, ...updatedTracks],
+    };
+    this.updatePlaylist(updatedPlaylist);
+  }
+
+  updatePlaylist(updatedPlaylist) {
+    this.playlist = updatedPlaylist;
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set(
+      "playlist",
+      encodeURIComponent(JSON.stringify(updatedPlaylist))
+    );
+    window.history.replaceState({}, "", "?" + urlParams.toString());
   }
 
   loadInPlayer({ detail }) {
@@ -42,16 +86,31 @@ class R4App extends LitElement {
 
   render() {
     return html`
-      <button @click="${this.requestNotificationPermission}">notify</button>
-      <r4-playlist-builder
-        @playlist-update="${this.loadPlaylist.bind(this)}"
-      ></r4-playlist-builder>
-      <r4-playlist
-        @load-playlist="${this.loadInPlayer.bind(this)}"
-      ></r4-playlist>
-      <r4-player></r4-player>
+      <details open>
+        <summary>Settings</summary>
+        <r4-notification></r4-notification>
+      </details>
+      <details open>
+        <summary>Tracks</summary>
+        <r4-playlist-urls
+          .tracks="${this.playlist ? this.playlist.tracks : []}"
+          @submit="${this.loadMediaUrls}"
+        ></r4-playlist-urls>
+      </details>
+      <details open>
+        <summary>Playlist</summary>
+        <r4-playlist
+          .playlist="${this.playlist}"
+          @load-playlist="${this.loadInPlayer}"
+        ></r4-playlist>
+      </details>
+      <details open>
+        <summary>Player</summary>
+        <r4-player></r4-player>
+      </details>
     `;
   }
+
   /* no shadow dom */
   createRenderRoot() {
     return this;
