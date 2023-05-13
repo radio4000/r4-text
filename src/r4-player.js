@@ -38,6 +38,8 @@ class R4Player extends LitElement {
       typeof this.player.getVueInstance === "function"
     ) {
       const vue = this.player.getVueInstance();
+
+      this.playlist.tracks = this.playlist.tracks.reverse();
       vue.updatePlaylist(this.playlist);
     }
   }
